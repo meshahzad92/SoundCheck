@@ -65,13 +65,6 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 The server will start on `http://localhost:8000`
 
-### 4. Test the API
-
-```bash
-# Run the test suite
-python test_api.py
-```
-
 ## API Endpoints
 
 ### Core Endpoints
