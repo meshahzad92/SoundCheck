@@ -63,16 +63,16 @@ def show_welcome_page():
         st.markdown("## Welcome to SoundCheck! 👋")
         
         st.markdown("""
-        **SoundCheck** is an AI-powered hearing test application that uses machine learning 
+        **SoundCheck** is an ML-powered hearing test application that uses machine learning 
         to analyze your hearing profile and provide personalized recommendations.
         
         ### What makes SoundCheck special?
         
-        - 🧠 **AI-Powered Analysis**: Uses trained machine learning models for accurate assessment
+        - 🧠 **ML-Powered Analysis**: Uses trained machine learning models for accurate assessment
         - 🔊 **Professional Audio Testing**: Generates precise pure-tone audio signals
         - 📊 **Detailed Results**: Comprehensive analysis with visualizations
         - 🏥 **Health Recommendations**: Personalized advice based on your results
-        - 🔒 **Privacy First**: All processing happens locally, no data stored
+        - 🔒 **Privacy First**: All processing happens locally, no data shared or exposed
         """)
         
         # User information form
@@ -444,10 +444,10 @@ def main():
         st.markdown("---")
         st.markdown("### About SoundCheck")
         st.markdown("""
-        **Version**: 1.0.0
-        **Model**: Logistic Regression
-        **Accuracy**: 99.01%
-        **Data**: NHANES Audiometry
+        **Version**: 1.0.0 \n
+        **Model**: Logistic Regression \n
+        **Accuracy**: 99.01% \n
+        **Data**: NHANES Audiometry \n
         """)
 
         # Deploy section

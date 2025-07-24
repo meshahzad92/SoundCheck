@@ -22,7 +22,7 @@ soundfile==0.12.1
 # Utilities
 python-dotenv==1.0.0
 Pillow==10.1.0
-base64==0.0.1
+#base64
 
 # Date and time
 python-dateutil==2.8.2
@@ -60,7 +60,7 @@ pydantic==2.5.2
 pydantic-settings==2.1.0
 
 # CORS and middleware
-python-cors==1.7.0
+#python-cors==1.7.0
 
 # Logging and utilities
 python-json-logger==2.0.7
