@@ -20,7 +20,6 @@ Client Request → FastAPI Router → Business Logic → ML Model → JSON Respo
 - **FastAPI Application** (main.py): REST API server with automatic documentation
 - **ML Model** (utils.py): Logistic regression classifier for hearing loss analysis
 - **Data Models** (models.py): Pydantic schemas for request/response validation
-- **Server Startup** (start_server.py): Uvicorn server configuration
 
 ## Installation & Setup
 
@@ -37,7 +36,7 @@ cd backend
 pip install -r requirements.txt
 
 # Start the server
-python start_server.py
+python main.py
 ```
 
 ### Verification
@@ -118,7 +117,7 @@ Content-Type: application/json
 ### Development Server
 ```bash
 # Start with auto-reload
-python start_server.py
+python main.py
 
 # Or use uvicorn directly
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
@@ -139,7 +138,6 @@ backend/
 ├── main.py                 # FastAPI application and routes
 ├── models.py              # Pydantic data models
 ├── utils.py               # ML model and utility functions
-├── start_server.py        # Server startup configuration
 ├── requirements.txt       # Python dependencies
 └── hearing_loss_model.pkl # Trained ML model file
 ```
@@ -148,7 +146,7 @@ backend/
 
 ### Server Settings
 ```python
-# start_server.py
+# main.py
 HOST = "0.0.0.0"
 PORT = 8000
 RELOAD = True  # Development only
@@ -289,29 +287,13 @@ The server will start on `http://localhost:8000`
 1. Add new Pydantic models to `models.py`
 2. Implement business logic in `utils.py`
 3. Add new endpoints to `main.py`
-4. Update tests in `test_api.py`
 
 ## Deployment
 
 The backend is designed to be easily deployable to:
-- **Local Development**: `python start_server.py`
+- **Local Development**: `python main.py`
 - **Cloud Platforms**: Heroku, Railway, Render, etc.
 - **Serverless**: Can be adapted for AWS Lambda, Vercel, etc.
-
-## Testing
-
-Run the comprehensive test suite:
-
-```bash
-python test_api.py
-```
-
-Tests cover:
-- Health checks
-- Model loading
-- Audio generation
-- Hearing test analysis
-- All API endpoints
 
 ## Notes
 
