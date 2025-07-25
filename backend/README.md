@@ -282,30 +282,9 @@ The server will start on `http://localhost:8000`
   - `AudioGenerator`: Pure-tone audio generation
   - `HearingAnalyzer`: Hearing test analysis and recommendations
 
-### Adding New Features
-
-1. Add new Pydantic models to `models.py`
-2. Implement business logic in `utils.py`
-3. Add new endpoints to `main.py`
-
-## Deployment
-
-The backend is designed to be easily deployable to:
-- **Local Development**: `python main.py`
-- **Cloud Platforms**: Heroku, Railway, Render, etc.
-- **Serverless**: Can be adapted for AWS Lambda, Vercel, etc.
-
 ## Notes
 
 - This is a **screening tool**, not a diagnostic medical device
 - Results should not replace professional audiological evaluation
 - The model is trained on NHANES data and may not generalize to all populations
 - Audio testing requires proper headphones/speakers for accurate results
-
-## Hackathon Compliance
-
-✅ **No LLM APIs**: Uses only scikit-learn models trained from scratch  
-✅ **Own ML Models**: Trained on NHANES audiometry data  
-✅ **Transparent**: All code and training process is open source  
-✅ **Functional**: Complete working API with audio generation and analysis  
-✅ **Real Problem**: Addresses early hearing loss detection and awareness
