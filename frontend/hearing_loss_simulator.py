@@ -204,7 +204,7 @@ class HearingLossSimulator:
             return audio_data / max_val
         return audio_data
 
-    def load_sample_audio(self, file_path="/home/shahzad/Work/Hackathon/Sample.mp3"):
+    def load_sample_audio(self, file_path="Sample.mp3"):
         """Load the sample audio file"""
         if not HAS_LIBROSA:
             raise ImportError("librosa library is required for audio file loading")
