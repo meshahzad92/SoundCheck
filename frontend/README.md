@@ -43,7 +43,7 @@ frontend/
 ├── app.py              # Main Streamlit application
 ├── utils.py            # Utility functions and API client
 ├── config.py           # Configuration and styling
-├── ../all_requirements.txt # Python dependencies (shared)
+├── ../requirements.txt # Python dependencies (shared)
 ├── README.md          # This file
 └── venv/              # Virtual environment
 ```
@@ -64,7 +64,7 @@ cd frontend
 source venv/bin/activate
 
 # Install dependencies (already done)
-pip install -r ../all_requirements.txt
+pip install -r ../requirements.txt
 ```
 
 ### 3. Start the Application
