@@ -15,7 +15,8 @@ import time
 from datetime import datetime
 
 # API Configuration
-API_BASE_URL = "http://localhost:8000"
+#API_BASE_URL = "http://localhost:8000"
+API_BASE_URL = "https://soundcheck-2qak.onrender.com"
 
 class APIClient:
     """Client for communicating with the SoundCheck backend API"""
