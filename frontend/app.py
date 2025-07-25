@@ -18,6 +18,7 @@ from config import (
     create_metric_card, create_progress_bar, create_frequency_display,
     create_result_category_display, ICONS
 )
+from hearing_loss_simulator import show_hearing_loss_simulator
 
 # Configure the Streamlit page
 st.set_page_config(**APP_CONFIG)
@@ -89,6 +90,22 @@ def show_welcome_page():
         # Start test button
         if st.button("🎧 Start Hearing Test", type="primary", use_container_width=True):
             st.session_state.test_started = True
+            st.rerun()
+
+        # Feature promotion
+        st.markdown("---")
+        st.markdown("### 🎵 New Feature: Hearing Loss Simulator")
+        st.markdown("""
+        Experience how different types of hearing loss affect audio perception.
+        Our simulator applies digital filters to demonstrate:
+        - High-frequency hearing loss (presbycusis)
+        - Mild to severe hearing impairment
+        - Real-time audio processing with visualizations
+        """)
+
+        if st.button("🎧 Try Hearing Loss Simulator", use_container_width=True):
+            # Set the page state to navigate to hearing loss simulator
+            st.session_state.current_page = "Hearing Loss Simulator"
             st.rerun()
     
     with col2:
@@ -423,22 +440,39 @@ def show_results():
 def main():
     """Main application logic"""
     
+    # Initialize current_page if not set
+    if 'current_page' not in st.session_state:
+        st.session_state.current_page = "Home"
+
     # Sidebar navigation
     with st.sidebar:
         st.markdown("### Navigation")
-        
+
         if st.session_state.test_completed:
-            page = st.radio("Go to:", ["Results", "New Test"], index=0)
+            options = ["Results", "Hearing Loss Simulator", "New Test"]
+            current_index = 0 if st.session_state.current_page == "Results" else (1 if st.session_state.current_page == "Hearing Loss Simulator" else 0)
+            page = st.radio("Go to:", options, index=current_index)
             if page == "New Test":
                 SessionManager.reset_test()
+                st.session_state.current_page = "Home"
                 st.rerun()
+            else:
+                st.session_state.current_page = page
         elif st.session_state.test_started:
-            page = st.radio("Go to:", ["Hearing Test", "Home"], index=0)
+            options = ["Hearing Test", "Hearing Loss Simulator", "Home"]
+            current_index = 0 if st.session_state.current_page == "Hearing Test" else (1 if st.session_state.current_page == "Hearing Loss Simulator" else 2)
+            page = st.radio("Go to:", options, index=current_index)
             if page == "Home":
                 SessionManager.reset_test()
+                st.session_state.current_page = "Home"
                 st.rerun()
+            else:
+                st.session_state.current_page = page
         else:
-            page = "Home"
+            options = ["Home", "Hearing Loss Simulator"]
+            current_index = 0 if st.session_state.current_page == "Home" else 1
+            page = st.radio("Go to:", options, index=current_index)
+            st.session_state.current_page = page
         
         # About section
         st.markdown("---")
@@ -469,9 +503,11 @@ def main():
         # Removed the warning notice as requested
     
     # Main content routing
-    if st.session_state.test_completed:
+    if st.session_state.current_page == "Hearing Loss Simulator":
+        show_hearing_loss_simulator()
+    elif st.session_state.test_completed and st.session_state.current_page == "Results":
         show_results()
-    elif st.session_state.test_started:
+    elif st.session_state.test_started and st.session_state.current_page == "Hearing Test":
         show_hearing_test()
     else:
         show_welcome_page()

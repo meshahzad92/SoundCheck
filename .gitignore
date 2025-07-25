@@ -3,3 +3,4 @@ frontend/__pycache__
 backend/venv
 backend/__pycache__
 .streamlit
+venv

@@ -47,7 +47,7 @@ backend_url = "https://your-backend-url.com"
 1. Go to [render.com](https://render.com)
 2. Create new Web Service
 3. Connect your GitHub repo
-4. Set build command: `cd backend && pip install -r requirements.txt`
+4. Set build command: `pip install -r all_requirements.txt`
 5. Set start command: `cd backend && python start_server.py`
 
 ##### Option C: Heroku
@@ -72,7 +72,7 @@ CORS_ORIGINS=["https://your-streamlit-app.streamlit.app"]
 - **API Connection Issues**: Check backend URL in secrets
 - **CORS Errors**: Update CORS_ORIGINS in backend
 - **Model Loading**: Ensure model files are included in deployment
-- **Dependencies**: Verify all requirements.txt files are complete
+- **Dependencies**: Verify all_requirements.txt file is complete
 
 ### Production Considerations
 1. **Security**: Use HTTPS for all endpoints

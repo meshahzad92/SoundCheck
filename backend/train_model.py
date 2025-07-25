@@ -21,6 +21,8 @@ def load_nhanes_data(file_path):
     print("Loading NHANES audiometry data...")
     df, meta = pyreadstat.read_xport(file_path)
     print(f"Loaded {len(df)} records with {len(df.columns)} columns")
+    print("=======================================")
+    print(df.head())
     return df, meta
 
 def clean_and_prepare_data(df):
@@ -234,8 +236,12 @@ def main():
     df_clean, freq_map = clean_and_prepare_data(df)
     
     # Prepare features and target
+    print("=======================================")
+    print("Cleaned data: ", df_clean.head())
+    print("=======================================")
     X, y, df_final = prepare_features_and_target(df_clean, freq_map)
-    
+    print("Final feature matrix X: ", X.head())
+    print("Final target vector y: ", y.head())
     if len(X) == 0:
         print("Error: No valid data available for training!")
         return

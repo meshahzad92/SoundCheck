@@ -40,7 +40,7 @@ class ModelManager:
                 logger.info(f"Loaded model metadata: {self.metadata['model_name']}")
             
             # Load the model
-            model_name = self.metadata['model_name'].lower() if self.metadata else "logisticregression"
+            model_name = self.metadata['model_name'].lower().replace(" ", "") if self.metadata else "logisticregression"
             model_path = os.path.join(self.model_dir, f"hearing_classifier_{model_name}.joblib")
             
             if os.path.exists(model_path):
@@ -238,7 +238,9 @@ class HearingAnalyzer:
         # - 2 or fewer voices heard = High risk (Red)
 
         if frequencies_heard == 0:
-            return "High"  # No voices heard - High risk (Red)
+            return "Critical"  # No voices heard - High risk (Red)
+        elif frequencies_heard == 1:
+            return "High"  # More than 2 voices heard - Medium risk (Yellow)
         elif frequencies_heard == total_frequencies:
             return "Low"   # All voices heard - Low risk (Green)
         elif frequencies_heard > 2:

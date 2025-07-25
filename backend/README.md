@@ -21,7 +21,7 @@ backend/
 ├── train_model.py         # ML model training script
 ├── test_api.py           # API testing script
 ├── start_server.py       # Server startup script
-├── requirements.txt      # Python dependencies
+├── ../all_requirements.txt # Python dependencies (shared)
 ├── AUX_J.xpt            # NHANES audiometry dataset
 ├── models/              # Trained ML models directory
 │   ├── hearing_classifier_logisticregression.joblib
@@ -47,7 +47,7 @@ cd backend
 source venv/bin/activate
 
 # Install dependencies (already done)
-pip install -r requirements.txt
+pip install -r ../all_requirements.txt
 
 # Train the ML model (already done)
 python train_model.py
@@ -164,7 +164,6 @@ The server will start on `http://localhost:8000`
 
 The backend is designed to be easily deployable to:
 - **Local Development**: `python start_server.py`
-- **Docker**: Can be containerized with a simple Dockerfile
 - **Cloud Platforms**: Heroku, Railway, Render, etc.
 - **Serverless**: Can be adapted for AWS Lambda, Vercel, etc.
 

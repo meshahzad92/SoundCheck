@@ -43,7 +43,7 @@ frontend/
 ├── app.py              # Main Streamlit application
 ├── utils.py            # Utility functions and API client
 ├── config.py           # Configuration and styling
-├── requirements.txt    # Python dependencies
+├── ../all_requirements.txt # Python dependencies (shared)
 ├── README.md          # This file
 └── venv/              # Virtual environment
 ```
@@ -64,7 +64,7 @@ cd frontend
 source venv/bin/activate
 
 # Install dependencies (already done)
-pip install -r requirements.txt
+pip install -r ../all_requirements.txt
 ```
 
 ### 3. Start the Application
@@ -180,16 +180,7 @@ streamlit run app.py
 streamlit run app.py --server.port 8501 --server.headless true
 ```
 
-### Docker Deployment
-```dockerfile
-FROM python:3.12-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-EXPOSE 8501
-CMD ["streamlit", "run", "app.py", "--server.headless", "true"]
-```
+
 
 ### Cloud Platforms
 - **Streamlit Cloud**: Direct GitHub integration
