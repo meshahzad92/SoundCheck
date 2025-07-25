@@ -83,8 +83,7 @@ Frontend (Streamlit) → API Calls → Backend (FastAPI) → ML Model → Respon
 ```
 SoundCheck/
 ├── README.md                 # This file
-├── requirements.txt          # Main project dependencies
-├── Sample.mp3               # Sample audio for hearing loss simulation
+├── train_model.ipynb          # Model training
 ├── backend/                 # Backend API server
 │   ├── README.md           # Backend-specific documentation
 │   ├── requirements.txt    # Backend dependencies
@@ -118,7 +117,7 @@ The backend provides the following REST API endpoints:
 - **Algorithm**: Logistic Regression
 - **Features**: Frequency response patterns, age, gender
 - **Output**: Hearing loss category, confidence score, risk level
-- **Accuracy**: 99%+ on validation data
+- **Accuracy**: 99%+ on test data
 
 ### Categories
 - Normal Hearing
@@ -131,7 +130,7 @@ The backend provides the following REST API endpoints:
 ### Backend Development
 ```bash
 cd backend
-python start_server.py
+python main.py
 # Server runs on http://localhost:8000
 # API docs available at http://localhost:8000/docs
 ```
