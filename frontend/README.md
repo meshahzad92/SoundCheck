@@ -1,243 +1,232 @@
-# SoundCheck Frontend - AI-Powered Hearing Test Interface
+# SoundCheck Frontend
 
-A professional, clean, and attractive Streamlit frontend for the SoundCheck hearing test application. This interface provides an intuitive user experience for conducting AI-powered hearing assessments.
+Professional Streamlit web application for the SoundCheck hearing test system. Provides an intuitive interface for conducting ML-powered hearing assessments with real-time analysis and educational features.
 
-## Features
+## Overview
 
-- **🎨 Professional UI**: Clean, modern design with custom CSS styling
-- **🔊 Interactive Audio Testing**: Real-time audio generation and playback
-- **📊 Data Visualizations**: Audiograms, frequency response charts, and risk gauges
-- **🧠 AI-Powered Analysis**: Real-time ML model predictions with confidence scores
-- **📱 Responsive Design**: Works on desktop, tablet, and mobile devices
-- **🎧 User-Friendly**: Step-by-step guided testing process
-- **📄 Downloadable Reports**: Export test results as CSV files
+The frontend serves as the user interface for the SoundCheck hearing test system, featuring:
+- Professional hearing test interface with guided workflow
+- Real-time ML-powered analysis and results visualization
+- Educational hearing loss simulator with pre-processed audio samples
+- Responsive design with clean, modern styling
+- Downloadable test reports and comprehensive results display
 
-## Screenshots
-
-### Welcome Page
-- Professional header with gradient styling
-- User information form (age, gender)
-- System status indicators
-- Clear instructions and setup guide
-
-### Hearing Test Interface
-- Progress tracking with visual indicators
-- Large, clear frequency displays
-- Interactive audio playback buttons
-- Simple Yes/No response interface
-- Sidebar with test progress
-
-### Results Dashboard
-- AI-powered hearing category classification
-- Key metrics: PTA score, confidence, risk level
-- Interactive audiogram visualization
-- Frequency response charts
-- Risk assessment gauge
-- Personalized health recommendations
-- Downloadable test reports
-
-## Project Structure
+## Architecture
 
 ```
-frontend/
-├── app.py              # Main Streamlit application
-├── utils.py            # Utility functions and API client
-├── config.py           # Configuration and styling
-├── ../requirements.txt # Python dependencies (shared)
-├── README.md          # This file
-└── venv/              # Virtual environment
+User Interface (Streamlit) → API Client → Backend API → ML Analysis → Results Display
 ```
 
-## Setup Instructions
+### Core Components
+- **Main Application** (app.py): Primary Streamlit interface and navigation
+- **API Client** (utils.py): Backend communication and data processing
+- **Configuration** (config.py): Styling, themes, and application settings
+- **Hearing Loss Simulator** (hearing_loss_simulator.py): Educational audio simulation feature
 
-### 1. Prerequisites
-- Python 3.12
-- Backend API running on `http://localhost:8000`
+## Installation & Setup
 
-### 2. Installation
+### Prerequisites
+- Python 3.8+
+- Backend API running on http://localhost:8000
+- Modern web browser with audio support
 
+### Quick Start
 ```bash
 # Navigate to frontend directory
 cd frontend
 
-# Activate virtual environment
-source venv/bin/activate
+# Install dependencies
+pip install -r requirements.txt
 
-# Install dependencies (already done)
-pip install -r ../requirements.txt
+# Start the application
+streamlit run app.py --server.port 8502
 ```
 
-### 3. Start the Application
+### Verification
+- Application: http://localhost:8502
+- Backend connection status shown in sidebar
+- Audio playback test available in hearing loss simulator
 
+## Application Features
+
+### 1. Home Page
+- Welcome interface with user information collection (age, gender)
+- Backend connection status indicator
+- Navigation to hearing test and hearing loss simulator
+- Clean, professional design with ML-powered branding
+
+### 2. Hearing Test Flow
+- **Guided Testing**: Step-by-step frequency testing (500Hz - 8000Hz)
+- **Audio Playback**: Real-time pure tone generation via backend API
+- **Progress Tracking**: Visual progress indicators and frequency status
+- **Response Collection**: Simple Yes/No interface for each frequency
+- **Navigation**: Dynamic navigation showing current test state
+
+### 3. Results Display
+- **ML Analysis**: Hearing loss classification with confidence scoring
+- **Visual Reports**: Audiogram charts and frequency response visualization
+- **Recommendations**: Personalized health recommendations based on results
+- **Export Options**: Downloadable CSV reports with test data
+- **Navigation**: Results shown within hearing test context
+
+### 4. Hearing Loss Simulator
+- **Educational Tool**: Experience different types of hearing loss
+- **Pre-processed Audio**: Instant playback of hearing loss simulations
+- **Multiple Types**: Mild, moderate, high-frequency, and severe hearing loss
+- **Sample Audio**: Uses JFK Moon Speech for realistic demonstration
+
+## Navigation System
+
+### Dynamic Navigation
+The application uses a context-aware navigation system:
+
+**Home State**: `["Home", "Hearing Loss Simulator"]`
+- Clean interface with only essential options
+- No test-related navigation when not testing
+
+**Test Active State**: `["Home", "Hearing Test", "Hearing Loss Simulator"]`
+- Appears when hearing test is started
+- "Hearing Test" option shows current test progress
+- Results are displayed within "Hearing Test" context
+
+### Navigation Behavior
+- **Representational**: Shows which section you're currently in
+- **Context-Aware**: Options change based on application state
+- **User-Friendly**: "Finish" button returns to clean home state
+
+## Technical Implementation
+
+### Code Structure
+```
+frontend/
+├── app.py                              # Main Streamlit application
+├── utils.py                           # API client and utility functions
+├── config.py                          # Styling and configuration
+├── hearing_loss_simulator.py          # Educational simulation feature
+├── generate_hearing_loss_samples.py   # Audio preprocessing script
+├── requirements.txt                   # Python dependencies
+├── Sample.mp3                         # Original sample audio
+├── Sample_mild.mp3                    # Pre-processed mild hearing loss
+├── Sample_moderate.mp3                # Pre-processed moderate hearing loss
+├── Sample_high_freq.mp3               # Pre-processed high-frequency loss
+└── Sample_severe.mp3                  # Pre-processed severe hearing loss
+```
+
+### Key Technologies
+- **Streamlit**: Web application framework
+- **Requests**: HTTP client for backend API communication
+- **Plotly**: Interactive data visualizations
+- **Librosa**: Audio processing for hearing loss simulation
+- **NumPy/SciPy**: Audio signal processing
+- **Pandas**: Data manipulation and CSV export
+
+### Session Management
+- **Test State**: Tracks current frequency, responses, and progress
+- **Navigation State**: Manages page routing and context
+- **User Data**: Stores age, gender, and test results
+- **Audio Cache**: Caches generated audio for performance
+
+## Configuration
+
+### Application Settings
+```python
+# config.py
+APP_CONFIG = {
+    "title": "SoundCheck",
+    "subtitle": "ML-Powered Hearing Test & Analysis",
+    "theme": "professional"
+}
+
+TEST_CONFIG = {
+    "frequencies": [500, 1000, 2000, 3000, 4000, 8000],
+    "tone_duration": 3.0,
+    "sample_rate": 22050
+}
+```
+
+### API Configuration
+```python
+# utils.py
+API_BASE_URL = "http://localhost:8000"  # Backend server URL
+REQUEST_TIMEOUT = 30  # Request timeout in seconds
+```
+
+### Styling Customization
+The application uses custom CSS for professional styling:
+- Gradient headers and backgrounds
+- Responsive design for mobile devices
+- Professional color scheme
+- Interactive hover effects
+
+## Development
+
+### Running in Development Mode
 ```bash
-# Method 1: Using Streamlit directly
-streamlit run app.py
+# Start with auto-reload
+streamlit run app.py --server.port 8502
 
-# Method 2: With custom configuration
-streamlit run app.py --server.port 8501 --server.address 0.0.0.0
+# With debug mode
+streamlit run app.py --server.port 8502 --logger.level debug
 ```
 
-The application will open in your browser at `http://localhost:8501`
+### Adding New Features
+1. **New Pages**: Add functions to app.py and update navigation
+2. **API Endpoints**: Extend APIClient class in utils.py
+3. **Styling**: Update config.py for new visual elements
+4. **Audio Features**: Extend hearing_loss_simulator.py
 
-## Usage Guide
-
-### 1. Welcome Page
-1. Enter your age and gender
-2. Ensure backend connection is healthy (green status indicators)
-3. Read the setup instructions
-4. Click "Start Hearing Test"
-
-### 2. Taking the Test
-1. Use headphones or earbuds for best results
-2. Find a quiet environment
-3. For each frequency:
-   - Click "Play [frequency] Hz Tone"
-   - Listen carefully to the audio
-   - Click "Yes, I heard it" or "No, I didn't hear it"
-4. Progress through all 7 frequencies (500Hz - 8000Hz)
-
-### 3. Viewing Results
-1. Review your hearing category classification
-2. Examine the audiogram and frequency response charts
-3. Read personalized health recommendations
-4. Download your test report if needed
-5. Take a new test or share results
-
-## Technical Features
-
-### UI Components
-- **Custom CSS Styling**: Professional gradients, animations, and responsive design
-- **Interactive Charts**: Plotly-based audiograms and visualizations
-- **Progress Tracking**: Visual progress bars and status indicators
-- **Audio Integration**: HTML5 audio with base64 encoded audio data
-- **Session Management**: Streamlit session state for test flow
-
-### API Integration
-- **Health Monitoring**: Real-time backend connection status
-- **Audio Generation**: Dynamic pure-tone audio creation
-- **ML Analysis**: Real-time hearing loss classification
-- **Error Handling**: Graceful error handling and user feedback
-
-### Data Visualization
-- **Audiogram**: Professional hearing threshold visualization
-- **Frequency Response**: Bar chart showing heard vs. not heard frequencies
-- **Risk Gauge**: Circular gauge showing risk level assessment
-- **Metrics Dashboard**: Key statistics and confidence scores
-
-## Customization
-
-### Styling
-Edit `config.py` to customize:
-- Color schemes and gradients
-- Font sizes and spacing
-- Animation effects
-- Responsive breakpoints
-
-### Test Configuration
-Modify `TEST_CONFIG` in `config.py`:
-- Test frequencies
-- Audio duration and volume
-- Instructions text
-- Progress indicators
-
-### API Settings
-Update `utils.py` for:
-- Backend URL configuration
-- Request timeout settings
-- Error handling behavior
-
-## Browser Compatibility
-
-- **Chrome**: Full support with audio playback
-- **Firefox**: Full support with audio playback
-- **Safari**: Full support with audio playback
-- **Edge**: Full support with audio playback
-- **Mobile Browsers**: Responsive design, audio may vary
-
-## Performance
-
-- **Load Time**: < 2 seconds on modern browsers
-- **Audio Generation**: < 1 second per frequency
-- **ML Analysis**: < 3 seconds for complete test
-- **Memory Usage**: < 100MB typical usage
-
-## Accessibility
-
-- **Screen Readers**: Semantic HTML structure
-- **Keyboard Navigation**: Full keyboard support
-- **High Contrast**: Clear visual indicators
-- **Font Scaling**: Responsive text sizing
-
-## Deployment Options
-
-### Local Development
-```bash
-streamlit run app.py
-```
-
-### Production Deployment
-```bash
-streamlit run app.py --server.port 8501 --server.headless true
-```
-
-
-
-### Cloud Platforms
-- **Streamlit Cloud**: Direct GitHub integration
-- **Heroku**: Add `setup.sh` and `Procfile`
-- **Railway**: Auto-deploy from repository
-- **Render**: Streamlit service deployment
+### Testing
+- **Manual Testing**: Use the web interface
+- **API Testing**: Verify backend connectivity
+- **Audio Testing**: Test with different browsers and devices
+- **Responsive Testing**: Check mobile and tablet layouts
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Backend Connection Failed**
-   - Ensure backend is running on `http://localhost:8000`
-   - Check firewall settings
-   - Verify API endpoints are accessible
+1. **Backend Connection Error**
+   ```
+   ⚠️ Backend server is not running
+   ```
+   **Solution**: Ensure backend server is running on http://localhost:8000
 
-2. **Audio Not Playing**
-   - Check browser audio permissions
-   - Ensure headphones/speakers are connected
-   - Try refreshing the page
+2. **Audio File Loading Error**
+   ```
+   ❌ Error loading sample audio: No such file or directory
+   ```
+   **Solution**: Verify Sample*.mp3 files exist in frontend directory
 
-3. **Slow Performance**
-   - Check internet connection
-   - Clear browser cache
-   - Restart the Streamlit server
+3. **Navigation Issues**
+   - **Problem**: Navigation doesn't update when changing pages
+   - **Solution**: Check session state management and page routing logic
 
-4. **Styling Issues**
-   - Hard refresh the browser (Ctrl+F5)
-   - Check browser developer console for errors
-   - Verify CSS is loading properly
+4. **Hearing Loss Simulator Issues**
+   - **Problem**: Pre-processed audio files not found
+   - **Solution**: Run `python generate_hearing_loss_samples.py` to create audio files
 
-## Development
+### Performance Optimization
+- Pre-processed audio files for instant playback
+- Session state caching for improved responsiveness
+- Efficient API communication with proper error handling
+- Lightweight ML model integration
 
-### Adding New Features
-1. Add utility functions to `utils.py`
-2. Update styling in `config.py`
-3. Implement UI components in `app.py`
-4. Test with different browsers and devices
+## Browser Compatibility
+- **Chrome/Chromium**: Full support with audio playback
+- **Firefox**: Full support with audio playback
+- **Safari**: Full support with audio playback
+- **Edge**: Full support with audio playback
+- **Mobile**: Responsive design, audio support varies
 
-### Code Structure
-- **app.py**: Main application logic and UI
-- **utils.py**: API communication and data processing
-- **config.py**: Styling, configuration, and constants
+## Security & Privacy
+- **Local Processing**: All data processing happens locally
+- **No Data Storage**: No persistent storage of user data
+- **API Security**: Secure communication with backend
+- **Input Validation**: Proper sanitization of user inputs
 
-## Security
-
-- **No Data Storage**: All processing is client-side
-- **API Communication**: Secure HTTP requests
-- **Input Validation**: User input sanitization
-- **Error Handling**: Safe error messages without sensitive data
-
-## License
-
-This project is part of the SoundCheck hackathon submission and follows open-source principles for transparency and reproducibility.
-
----
-
-**Status**: ✅ **COMPLETE AND FULLY FUNCTIONAL**
-
-The frontend provides a professional, user-friendly interface for the AI-powered hearing test system with comprehensive visualizations and seamless backend integration.
+## Contributing
+1. Follow Streamlit best practices
+2. Maintain clean separation of concerns (app.py, utils.py, config.py)
+3. Test across different browsers and devices
+4. Update documentation for new features
+5. Ensure responsive design principles
