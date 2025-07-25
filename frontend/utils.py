@@ -110,14 +110,11 @@ class AudioPlayer:
     def play_audio_from_base64(audio_data: str, autoplay: bool = False) -> None:
         """Play audio from base64 data"""
         try:
-            # Create audio HTML element
-            audio_html = f"""
-            <audio controls {"autoplay" if autoplay else ""} style="width: 100%;">
-                <source src="data:audio/wav;base64,{audio_data}" type="audio/wav">
-                Your browser does not support the audio element.
-            </audio>
-            """
-            st.markdown(audio_html, unsafe_allow_html=True)
+            import base64
+            # Decode base64 to bytes
+            audio_bytes = base64.b64decode(audio_data)
+            # Use Streamlit's native audio component
+            st.audio(audio_bytes, format='audio/wav', autoplay=autoplay)
         except Exception as e:
             st.error(f"Error playing audio: {e}")
     
@@ -352,6 +349,9 @@ class SessionManager:
         st.session_state.frequency_responses = []
         st.session_state.test_completed = False
         st.session_state.test_results = None
+        # Clear audio played tracking
+        if 'audio_played_for_frequency' in st.session_state:
+            st.session_state.audio_played_for_frequency = {}
     
     @staticmethod
     def save_response(frequency: int, heard: bool):

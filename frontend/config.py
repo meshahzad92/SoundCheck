@@ -15,7 +15,7 @@ APP_CONFIG = {
 # Test Configuration
 TEST_CONFIG = {
     "frequencies": [500, 1000, 2000, 3000, 4000, 6000, 8000],
-    "tone_duration": 2.0,
+    "tone_duration": 3.0,
     "tone_volume": 0.6,
     "instructions": {
         "setup": """

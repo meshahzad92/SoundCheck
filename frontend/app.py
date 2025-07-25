@@ -47,16 +47,12 @@ def show_welcome_page():
     
     # Check backend connection
     if not check_backend_connection():
-        create_info_card("""
-        <h3>⚠️ Backend Connection Issue</h3>
-        <p>Cannot connect to the SoundCheck backend API. Please ensure:</p>
-        <ul>
-            <li>The backend server is running on <code>http://localhost:8000</code></li>
-            <li>Run <code>python start_server.py</code> in the backend directory</li>
-        </ul>
-        """, "error")
+        st.warning("⚠️ Backend server is not running")
         return
-    
+
+    # Backend connection OK
+    st.success("✅ Backend server connected")
+
     # Welcome content
     col1, col2 = st.columns([2, 1])
     
@@ -90,6 +86,7 @@ def show_welcome_page():
         # Start test button
         if st.button("🎧 Start Hearing Test", type="primary", use_container_width=True):
             st.session_state.test_started = True
+            st.session_state.current_page = "Hearing Test"
             st.rerun()
 
         # Feature promotion
@@ -175,8 +172,15 @@ def show_hearing_test():
         # Audio player
         st.markdown("### 🔊 Audio Test")
         
+        # Initialize audio played tracking
+        if 'audio_played_for_frequency' not in st.session_state:
+            st.session_state.audio_played_for_frequency = {}
+
+        # Check if audio has been played for current frequency
+        audio_played = st.session_state.audio_played_for_frequency.get(current_frequency, False)
+
         # Play button
-        if st.button(f"▶️ Play {current_frequency} Hz Tone", 
+        if st.button(f"▶️ Play {current_frequency} Hz Tone",
                     type="primary", use_container_width=True):
             with st.spinner("Generating audio..."):
                 audio_response = api_client.generate_audio(
@@ -184,38 +188,62 @@ def show_hearing_test():
                     duration=TEST_CONFIG["tone_duration"],
                     volume=TEST_CONFIG["tone_volume"]
                 )
-                
+
                 if audio_response.get("success"):
+                    # Mark audio as played for this frequency
+                    st.session_state.audio_played_for_frequency[current_frequency] = True
+
+                    # Show audio player
                     AudioPlayer.play_audio_from_base64(
-                        audio_response["audio_data"], 
+                        audio_response["audio_data"],
                         autoplay=True
                     )
-                    st.success("🔊 Audio playing! Listen carefully...")
+                    st.success("🔊 Audio is playing for 3 seconds! You can now make your selection below.")
                 else:
                     st.error(f"Failed to generate audio: {audio_response.get('error')}")
         
         st.markdown("---")
-        
+
         # Response buttons
         st.markdown("### Did you hear the tone?")
-        
-        col_yes, col_no = st.columns(2)
-        
-        with col_yes:
-            if st.button("✅ Yes, I heard it", use_container_width=True, type="primary"):
-                SessionManager.save_response(current_frequency, True)
-                st.session_state.current_frequency_index += 1
-                st.success("Response recorded!")
-                time.sleep(0.5)
-                st.rerun()
-        
-        with col_no:
-            if st.button("❌ No, I didn't hear it", use_container_width=True):
-                SessionManager.save_response(current_frequency, False)
-                st.session_state.current_frequency_index += 1
-                st.success("Response recorded!")
-                time.sleep(0.5)
-                st.rerun()
+
+        # Check if audio has been played for current frequency
+        audio_played = st.session_state.audio_played_for_frequency.get(current_frequency, False)
+
+        if not audio_played:
+            st.info("🎵 Please play the audio first before making your selection.")
+
+        # Create a placeholder for the response section
+        response_placeholder = st.empty()
+
+        with response_placeholder.container():
+            col_yes, col_no = st.columns(2)
+
+            with col_yes:
+                if st.button("✅ Yes, I heard it", use_container_width=True, type="primary",
+                            disabled=not audio_played):
+                    SessionManager.save_response(current_frequency, True)
+                    st.session_state.current_frequency_index += 1
+                    # Clear the audio played status for next frequency
+                    st.session_state.audio_played_for_frequency[current_frequency] = False
+
+                    # Clear the response section and show transition message
+                    response_placeholder.success("✅ Response recorded! Moving to next frequency...")
+                    time.sleep(1.0)
+                    st.rerun()
+
+            with col_no:
+                if st.button("❌ No, I didn't hear it", use_container_width=True,
+                            disabled=not audio_played):
+                    SessionManager.save_response(current_frequency, False)
+                    st.session_state.current_frequency_index += 1
+                    # Clear the audio played status for next frequency
+                    st.session_state.audio_played_for_frequency[current_frequency] = False
+
+                    # Clear the response section and show transition message
+                    response_placeholder.success("✅ Response recorded! Moving to next frequency...")
+                    time.sleep(1.0)
+                    st.rerun()
     
     # Sidebar with progress
     with st.sidebar:
@@ -484,21 +512,7 @@ def main():
         **Data**: NHANES Audiometry \n
         """)
 
-        # Deploy section
-        st.markdown("---")
-        st.markdown("### 🚀 Deploy")
-        if st.button("Deploy to Streamlit Cloud", use_container_width=True):
-            st.info("""
-            To deploy this app to Streamlit Cloud:
 
-            1. Push your code to GitHub
-            2. Go to [share.streamlit.io](https://share.streamlit.io)
-            3. Connect your GitHub repository
-            4. Select the main branch and `frontend/app.py`
-            5. Click Deploy!
-
-            **Note**: Make sure to set up environment variables for the backend API URL.
-            """)
 
         # Removed the warning notice as requested
     
