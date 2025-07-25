@@ -21,7 +21,7 @@ backend/
 ├── train_model.py         # ML model training script
 ├── test_api.py           # API testing script
 ├── start_server.py       # Server startup script
-├── ../all_requirements.txt # Python dependencies (shared)
+├── ../requirements.txt # Python dependencies (shared)
 ├── AUX_J.xpt            # NHANES audiometry dataset
 ├── models/              # Trained ML models directory
 │   ├── hearing_classifier_logisticregression.joblib
@@ -47,7 +47,7 @@ cd backend
 source venv/bin/activate
 
 # Install dependencies (already done)
-pip install -r ../all_requirements.txt
+pip install -r ../requirements.txt
 
 # Train the ML model (already done)
 python train_model.py
