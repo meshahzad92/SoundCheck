@@ -204,6 +204,22 @@ class HearingLossSimulator:
             return audio_data / max_val
         return audio_data
 
+    def load_sample_audio(self, file_path="/home/shahzad/Work/Hackathon/Sample.mp3"):
+        """Load the sample audio file"""
+        if not HAS_LIBROSA:
+            raise ImportError("librosa library is required for audio file loading")
+
+        try:
+            audio_data, sample_rate = librosa.load(file_path, sr=None)
+            # Limit duration to 10 seconds for performance
+            if len(audio_data) > sample_rate * 10:
+                audio_data = audio_data[:sample_rate * 10]
+
+            audio_data = self.normalize_audio(audio_data)
+            return audio_data, sample_rate
+        except Exception as e:
+            raise Exception(f"Error loading audio file: {str(e)}")
+
     def generate_sample_audio(self, duration=3.0, sr=22050):
         """Generate a sample audio clip with multiple frequency components"""
         t = np.linspace(0, duration, int(sr * duration), False)
@@ -256,20 +272,24 @@ def show_hearing_loss_simulator():
     st.markdown("### 🎵 Audio Source")
     audio_source = st.radio(
         "Choose audio source:",
-        ["Generate Sample Audio", "Upload Your Own Audio"],
-        help="You can use our generated sample or upload your own audio file"
+        ["Play Audio", "Upload Your Own Audio"],
+        help="You can use our sample audio or upload your own audio file"
     )
 
     audio_data = None
     sample_rate = None
 
-    if audio_source == "Generate Sample Audio":
-        if st.button("🎼 Generate Sample Audio", use_container_width=True):
-            with st.spinner("Generating sample audio..."):
-                audio_data, sample_rate = simulator.generate_sample_audio()
-                st.session_state.original_audio = audio_data
-                st.session_state.sample_rate = sample_rate
-                st.success("✅ Sample audio generated!")
+    if audio_source == "Play Audio":
+        if st.button("🎼 Play Audio", use_container_width=True):
+            with st.spinner("Loading sample audio..."):
+                try:
+                    # Load the sample audio file using the new method
+                    audio_data, sample_rate = simulator.load_sample_audio()
+                    st.session_state.original_audio = audio_data
+                    st.session_state.sample_rate = sample_rate
+                    st.success("✅ Sample audio loaded!")
+                except Exception as e:
+                    st.error(f"❌ Error loading sample audio: {str(e)}")
 
         if 'original_audio' in st.session_state:
             audio_data = st.session_state.original_audio

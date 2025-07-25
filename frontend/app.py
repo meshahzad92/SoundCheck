@@ -91,7 +91,7 @@ def show_welcome_page():
 
         # Feature promotion
         st.markdown("---")
-        st.markdown("### 🎵 New Feature: Hearing Loss Simulator")
+        st.markdown("### 🎵 Hearing Loss Simulator")
         st.markdown("""
         Experience how different types of hearing loss affect audio perception.
         Our simulator applies digital filters to demonstrate:
