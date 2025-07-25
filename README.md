@@ -88,7 +88,6 @@ SoundCheck/
 ├── backend/                 # Backend API server
 │   ├── README.md           # Backend-specific documentation
 │   ├── requirements.txt    # Backend dependencies
-│   ├── start_server.py     # Server startup script
 │   ├── main.py            # FastAPI application
 │   ├── models.py          # Data models and schemas
 │   ├── utils.py           # ML model and utilities
@@ -152,7 +151,7 @@ streamlit run app.py --server.port 8502
 ## Configuration
 
 ### Backend Configuration
-- Server host/port settings in `start_server.py`
+- Server host/port settings in `main.py`
 - ML model parameters in `utils.py`
 - API response models in `models.py`
 
