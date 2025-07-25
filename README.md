@@ -91,15 +91,18 @@ SoundCheck/
 │   ├── models.py          # Data models and schemas
 │   ├── utils.py           # ML model and utilities
 │   └── hearing_loss_model.pkl  # Trained ML model
-└── frontend/               # Frontend web application
-    ├── README.md          # Frontend-specific documentation
-    ├── requirements.txt   # Frontend dependencies
-    ├── app.py            # Main Streamlit application
-    ├── config.py         # Configuration and styling
-    ├── utils.py          # Utility functions and API client
-    ├── hearing_loss_simulator.py  # Hearing loss simulation
-    ├── Sample*.mp3       # Pre-processed audio samples
-    └── generate_hearing_loss_samples.py  # Audio preprocessing script
+└── frontend/
+    ├── app.py                              # Main Streamlit application
+    ├── utils.py                           # API client and utility functions
+    ├── config.py                          # Styling and configuration
+    ├── hearing_loss_simulator.py          # Educational simulation feature
+    ├── generate_hearing_loss_samples.py   # Audio preprocessing script
+    ├── requirements.txt                   # Python dependencies
+    ├── Sample.mp3                         # Original sample audio
+    ├── Sample_mild.mp3                    # Pre-processed mild hearing loss
+    ├── Sample_moderate.mp3                # Pre-processed moderate hearing loss
+    ├── Sample_high_freq.mp3               # Pre-processed high-frequency loss
+    └── Sample_severe.mp3                  # Pre-processed severe hearing loss
 ```
 
 ## API Endpoints
