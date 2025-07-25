@@ -4,3 +4,5 @@ backend/venv
 backend/__pycache__
 .streamlit
 venv
+.devcontainer
+DEPLOYMENT.md
