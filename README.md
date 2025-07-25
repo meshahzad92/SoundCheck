@@ -191,10 +191,6 @@ streamlit run app.py --server.port 8502
 3. Make changes and test thoroughly
 4. Submit a pull request with detailed description
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Support
 
 For technical support or questions:
