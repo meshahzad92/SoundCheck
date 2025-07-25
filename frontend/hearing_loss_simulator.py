@@ -204,8 +204,43 @@ class HearingLossSimulator:
             return audio_data / max_val
         return audio_data
 
-    def load_sample_audio(self, file_path="frontend/Sample.mp3"):
+    def load_sample_audio(self, file_path=None):
         """Load the sample audio file"""
+        if not HAS_LIBROSA:
+            raise ImportError("librosa library is required for audio file loading")
+
+        # Use absolute path based on script location
+        if file_path is None:
+            import os
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(script_dir, "Sample.mp3")
+
+        try:
+            audio_data, sample_rate = librosa.load(file_path, sr=None)
+            # Limit duration to 10 seconds for performance
+            if len(audio_data) > sample_rate * 10:
+                audio_data = audio_data[:sample_rate * 10]
+
+            audio_data = self.normalize_audio(audio_data)
+            return audio_data, sample_rate
+        except Exception as e:
+            raise Exception(f"Error loading audio file: {str(e)}")
+
+    def load_pregenerated_audio(self, hearing_type="original"):
+        """Load pre-generated hearing loss audio files"""
+        import os
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+
+        file_paths = {
+            "original": os.path.join(script_dir, "Sample.mp3"),
+            "mild": os.path.join(script_dir, "Sample_mild.mp3"),
+            "moderate": os.path.join(script_dir, "Sample_moderate.mp3"),
+            "high_freq": os.path.join(script_dir, "Sample_high_freq.mp3"),
+            "severe": os.path.join(script_dir, "Sample_severe.mp3")
+        }
+
+        file_path = file_paths.get(hearing_type, file_paths["original"])
+
         if not HAS_LIBROSA:
             raise ImportError("librosa library is required for audio file loading")
 
@@ -218,7 +253,8 @@ class HearingLossSimulator:
             audio_data = self.normalize_audio(audio_data)
             return audio_data, sample_rate
         except Exception as e:
-            raise Exception(f"Error loading audio file: {str(e)}")
+            # Fallback to generating the audio if pre-generated file doesn't exist
+            return self.load_sample_audio()
 
     def generate_sample_audio(self, duration=3.0, sr=22050):
         """Generate a sample audio clip with multiple frequency components"""
@@ -256,7 +292,7 @@ def show_hearing_loss_simulator():
     ### What is Simulated Hearing Loss?
 
     This tool allows you to experience how audio sounds with different types of hearing loss.
-    We apply digital filters to normal audio to simulate:
+    We use pre-processed audio samples to instantly demonstrate:
 
     - **High-frequency hearing loss** (presbycusis) - common with aging
     - **Mild hearing loss** - affects speech frequencies
@@ -269,57 +305,25 @@ def show_hearing_loss_simulator():
     simulator = HearingLossSimulator()
 
     # Audio source selection
-    st.markdown("### 🎵 Audio Source")
-    audio_source = st.radio(
-        "Choose audio source:",
-        ["Play Audio", "Upload Your Own Audio"],
-        help="You can use our sample audio or upload your own audio file"
-    )
+    st.markdown("### 🎵 Sample Audio")
 
     audio_data = None
     sample_rate = None
 
-    if audio_source == "Play Audio":
-        if st.button("🎼 Play Audio", use_container_width=True):
-            with st.spinner("Loading sample audio..."):
-                try:
-                    # Load the sample audio file using the new method
-                    audio_data, sample_rate = simulator.load_sample_audio()
-                    st.session_state.original_audio = audio_data
-                    st.session_state.sample_rate = sample_rate
-                    st.success("✅ Sample audio loaded!")
-                except Exception as e:
-                    st.error(f"❌ Error loading sample audio: {str(e)}")
+    if st.button("🎼 Load Sample Audio", use_container_width=True):
+        with st.spinner("Loading sample audio..."):
+            try:
+                # Load the original sample audio file
+                audio_data, sample_rate = simulator.load_sample_audio()
+                st.session_state.original_audio = audio_data
+                st.session_state.sample_rate = sample_rate
+                st.success("✅ Sample audio loaded!")
+            except Exception as e:
+                st.error(f"❌ Error loading sample audio: {str(e)}")
 
-        if 'original_audio' in st.session_state:
-            audio_data = st.session_state.original_audio
-            sample_rate = st.session_state.sample_rate
-
-    else:  # Upload Your Own Audio
-        uploaded_file = st.file_uploader(
-            "Upload an audio file",
-            type=['wav', 'mp3', 'flac', 'm4a'],
-            help="Supported formats: WAV, MP3, FLAC, M4A"
-        )
-
-        if uploaded_file is not None:
-            if not HAS_LIBROSA:
-                st.error("❌ librosa library is required for audio file loading. Please use the 'Generate Sample Audio' option instead.")
-            else:
-                try:
-                    with st.spinner("Loading audio file..."):
-                        audio_data, sample_rate = librosa.load(uploaded_file, sr=None)
-                        # Limit duration to 10 seconds for performance
-                        if len(audio_data) > sample_rate * 10:
-                            audio_data = audio_data[:sample_rate * 10]
-                            st.info("ℹ️ Audio trimmed to 10 seconds for performance")
-
-                        audio_data = simulator.normalize_audio(audio_data)
-                        st.session_state.original_audio = audio_data
-                        st.session_state.sample_rate = sample_rate
-                        st.success("✅ Audio file loaded successfully!")
-                except Exception as e:
-                    st.error(f"❌ Error loading audio file: {str(e)}")
+    if 'original_audio' in st.session_state:
+        audio_data = st.session_state.original_audio
+        sample_rate = st.session_state.sample_rate
 
     # Show audio controls if we have audio data
     if audio_data is not None and sample_rate is not None:
@@ -337,33 +341,65 @@ def show_hearing_loss_simulator():
 
         with col1:
             if st.button("🔇 Mild Hearing Loss", use_container_width=True):
-                with st.spinner("Applying mild hearing loss filter..."):
-                    filtered_audio = simulator.simulate_mild_hearing_loss(audio_data, sample_rate)
-                    filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, sample_rate)
+                try:
+                    # Try to load pre-generated audio first
+                    filtered_audio, filtered_sr = simulator.load_pregenerated_audio("mild")
+                    filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, filtered_sr)
                     st.audio(filtered_wav, format='audio/wav')
                     st.session_state.last_filtered = ('mild', filtered_audio)
+                except:
+                    # Fallback to real-time processing
+                    with st.spinner("Applying mild hearing loss filter..."):
+                        filtered_audio = simulator.simulate_mild_hearing_loss(audio_data, sample_rate)
+                        filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, sample_rate)
+                        st.audio(filtered_wav, format='audio/wav')
+                        st.session_state.last_filtered = ('mild', filtered_audio)
 
             if st.button("🔇 Moderate Hearing Loss", use_container_width=True):
-                with st.spinner("Applying moderate hearing loss filter..."):
-                    filtered_audio = simulator.simulate_moderate_hearing_loss(audio_data, sample_rate)
-                    filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, sample_rate)
+                try:
+                    # Try to load pre-generated audio first
+                    filtered_audio, filtered_sr = simulator.load_pregenerated_audio("moderate")
+                    filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, filtered_sr)
                     st.audio(filtered_wav, format='audio/wav')
                     st.session_state.last_filtered = ('moderate', filtered_audio)
+                except:
+                    # Fallback to real-time processing
+                    with st.spinner("Applying moderate hearing loss filter..."):
+                        filtered_audio = simulator.simulate_moderate_hearing_loss(audio_data, sample_rate)
+                        filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, sample_rate)
+                        st.audio(filtered_wav, format='audio/wav')
+                        st.session_state.last_filtered = ('moderate', filtered_audio)
 
         with col2:
             if st.button("🔇 High-Frequency Loss", use_container_width=True):
-                with st.spinner("Applying high-frequency hearing loss filter..."):
-                    filtered_audio = simulator.simulate_high_frequency_loss(audio_data, sample_rate)
-                    filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, sample_rate)
+                try:
+                    # Try to load pre-generated audio first
+                    filtered_audio, filtered_sr = simulator.load_pregenerated_audio("high_freq")
+                    filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, filtered_sr)
                     st.audio(filtered_wav, format='audio/wav')
                     st.session_state.last_filtered = ('high_freq', filtered_audio)
+                except:
+                    # Fallback to real-time processing
+                    with st.spinner("Applying high-frequency hearing loss filter..."):
+                        filtered_audio = simulator.simulate_high_frequency_loss(audio_data, sample_rate)
+                        filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, sample_rate)
+                        st.audio(filtered_wav, format='audio/wav')
+                        st.session_state.last_filtered = ('high_freq', filtered_audio)
 
             if st.button("🔇 Severe Hearing Loss", use_container_width=True):
-                with st.spinner("Applying severe hearing loss filter..."):
-                    filtered_audio = simulator.simulate_severe_hearing_loss(audio_data, sample_rate)
-                    filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, sample_rate)
+                try:
+                    # Try to load pre-generated audio first
+                    filtered_audio, filtered_sr = simulator.load_pregenerated_audio("severe")
+                    filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, filtered_sr)
                     st.audio(filtered_wav, format='audio/wav')
                     st.session_state.last_filtered = ('severe', filtered_audio)
+                except:
+                    # Fallback to real-time processing
+                    with st.spinner("Applying severe hearing loss filter..."):
+                        filtered_audio = simulator.simulate_severe_hearing_loss(audio_data, sample_rate)
+                        filtered_wav = simulator.convert_to_wav_bytes(filtered_audio, sample_rate)
+                        st.audio(filtered_wav, format='audio/wav')
+                        st.session_state.last_filtered = ('severe', filtered_audio)
 
         # Show visualizations if we have filtered audio
         if 'last_filtered' in st.session_state:

@@ -1,5 +1,5 @@
 """
-SoundCheck - AI-Powered Hearing Test Streamlit Application
+SoundCheck - ML-Powered Hearing Test Streamlit Application
 Professional, clean, and attractive frontend for the hearing test system
 """
 
@@ -265,6 +265,7 @@ def show_hearing_test():
         # Reset button
         if st.button("🔄 Restart Test"):
             SessionManager.reset_test()
+            st.session_state.current_page = "Hearing Test"
             st.rerun()
 
 def show_results():
@@ -293,7 +294,7 @@ def show_results():
     st.markdown("""
     <div style="text-align: center; margin-bottom: 2rem;">
         <h1 style="color: white; font-size: 2.2rem; margin-bottom: 0.5rem;">🎯 Your Hearing Analysis</h1>
-        <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin: 0;">AI-powered assessment complete</p>
+        <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin: 0;">ML-powered assessment complete</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -438,8 +439,9 @@ def show_results():
     col_new, col_download = st.columns(2)
     
     with col_new:
-        if st.button("🔄 Take New Test", type="primary", use_container_width=True):
+        if st.button("Finish", type="primary", use_container_width=True):
             SessionManager.reset_test()
+            st.session_state.current_page = "Home"
             st.rerun()
     
     with col_download:
@@ -476,31 +478,45 @@ def main():
     with st.sidebar:
         st.markdown("### Navigation")
 
-        if st.session_state.test_completed:
-            options = ["Results", "Hearing Loss Simulator", "New Test"]
-            current_index = 0 if st.session_state.current_page == "Results" else (1 if st.session_state.current_page == "Hearing Loss Simulator" else 0)
-            page = st.radio("Go to:", options, index=current_index)
-            if page == "New Test":
+        # Dynamic navigation based on test state
+        if st.session_state.test_started or st.session_state.test_completed:
+            # During test or showing results - show 3 options
+            options = ["Home", "Hearing Test", "Hearing Loss Simulator"]
+
+            if st.session_state.current_page == "Hearing Loss Simulator":
+                current_index = 2
+            elif st.session_state.current_page == "Hearing Test":
+                current_index = 1
+            else:
+                current_index = 0
+
+            page = st.radio("Go to:", options, index=current_index, key="nav_test_active")
+
+            # Handle navigation changes
+            if page == "Home" and st.session_state.current_page != "Home":
                 SessionManager.reset_test()
                 st.session_state.current_page = "Home"
                 st.rerun()
-            else:
-                st.session_state.current_page = page
-        elif st.session_state.test_started:
-            options = ["Hearing Test", "Hearing Loss Simulator", "Home"]
-            current_index = 0 if st.session_state.current_page == "Hearing Test" else (1 if st.session_state.current_page == "Hearing Loss Simulator" else 2)
-            page = st.radio("Go to:", options, index=current_index)
-            if page == "Home":
-                SessionManager.reset_test()
-                st.session_state.current_page = "Home"
+            elif page == "Hearing Loss Simulator" and st.session_state.current_page != "Hearing Loss Simulator":
+                st.session_state.current_page = "Hearing Loss Simulator"
                 st.rerun()
-            else:
-                st.session_state.current_page = page
+            # Hearing Test option just keeps current state
+
         else:
+            # On home page - show only 2 options
             options = ["Home", "Hearing Loss Simulator"]
-            current_index = 0 if st.session_state.current_page == "Home" else 1
-            page = st.radio("Go to:", options, index=current_index)
-            st.session_state.current_page = page
+
+            if st.session_state.current_page == "Hearing Loss Simulator":
+                current_index = 1
+            else:
+                current_index = 0
+
+            page = st.radio("Go to:", options, index=current_index, key="nav_home_only")
+
+            # Handle navigation changes
+            if page != st.session_state.current_page:
+                st.session_state.current_page = page
+                st.rerun()
         
         # About section
         st.markdown("---")
@@ -519,11 +535,19 @@ def main():
     # Main content routing
     if st.session_state.current_page == "Hearing Loss Simulator":
         show_hearing_loss_simulator()
-    elif st.session_state.test_completed and st.session_state.current_page == "Results":
-        show_results()
-    elif st.session_state.test_started and st.session_state.current_page == "Hearing Test":
-        show_hearing_test()
+    elif st.session_state.current_page == "Hearing Test":
+        if st.session_state.test_completed:
+            # Show results when test is completed but still in "Hearing Test" navigation
+            show_results()
+        elif st.session_state.test_started:
+            # Show test interface when test is in progress
+            show_hearing_test()
+        else:
+            # Start test if navigated to Hearing Test page
+            st.session_state.test_started = True
+            show_hearing_test()
     else:
+        # Home page
         show_welcome_page()
 
 if __name__ == "__main__":

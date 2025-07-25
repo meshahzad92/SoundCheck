@@ -322,7 +322,7 @@ def create_header():
     st.markdown("""
     <div class="app-header fade-in">
         <div class="app-title">🔊 SoundCheck</div>
-        <div class="app-subtitle">AI-Powered Hearing Test & Analysis</div>
+        <div class="app-subtitle">ML-Powered Hearing Test & Analysis</div>
     </div>
     """, unsafe_allow_html=True)
 
